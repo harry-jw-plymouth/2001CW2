@@ -1,0 +1,111 @@
+# swagger.yml
+
+openapi: 3.0.0
+info:
+  title: "2001 Trail API"
+  description: "An API about trails and notes" 
+  version: "1.0.0"
+
+servers:
+  - url: "/api"
+
+components: 
+  schemas:
+    Trail:
+      type: "object"
+      required:
+        - TrailID
+      properties:
+        TrailID:
+          type: "integer"
+        Trail_name:
+          type: "string"
+        Trail_Summary:
+          type: "string"
+        Trail_Description:
+          type: "string"
+        Difficulty:
+          type: "string"
+        Location:
+          type: "string"
+        Length:
+          type: "integer"
+        Elevation_gain:
+          type: "integer"
+        Route_type:
+          type: "string"
+        OwnerID:
+          type: "integer"
+  parameters:
+    TrailID:
+      name: "TrailID"
+      description: "ID of trail to get"
+      in: path
+      required: True 
+      schema:
+        type: "integer"
+         
+
+paths:
+  /trails:
+    get:
+      operationId: "trails.read_all"
+      tags:
+        - "Trails"
+      summary: "Read the list of trails"
+      responses:
+        "200":
+          description: "Successfully read trails list"
+    post:
+      operationId: "trails.create"
+      tags:
+        - Trails
+      summary: "Create a trail"
+      requestBody:
+        description: "Trail to create"
+        required: True 
+        content: 
+          application/json:
+            schema:
+              x-body-name: "trails"
+              $ref: "#/components/schemas/Trail"
+      responses:
+        "201":
+          description: "Successfully created trail"
+  /trails/{TrailID}:
+    get:
+      operationId: "trails.read_one"
+      tags:
+        - Trails 
+      summary: "Read one trail"
+      parameters: 
+        - $ref: "#/components/parameters/TrailID"
+      responses:
+        "200":
+          description: "Successfully read Trail"
+    put:
+      tags:
+        - Trails
+      operationId: "trails.update"
+      summary: "update a trail"
+      parameters:
+        - $ref: "#/components/parameters/TrailID"
+      responses:
+        "200":
+          description: "Successfully updated trail"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "trails"
+              $ref: "#/components/schemas/Trail"
+    delete:
+      tags:
+        - Trails
+      operationId: "trails.delete"
+      summary: "Delete a trail"
+      parameters:
+        - $ref: "#/components/parameters/TrailID"
+      responses:
+        "204":
+          description: "Successfully deleted trail"

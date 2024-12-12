@@ -6,7 +6,6 @@ from flask_marshmallow import Marshmallow
 import pyodbc
 import urllib.parse
 
-
 server = 'dist-6-505.uopnet.plymouth.ac.uk'
 database = 'COMP2001_HWatton'
 username = 'HWatton'
@@ -25,24 +24,16 @@ conn_str = (
     'Trusted_Connection=No'
 )
 
+Trails = [
+    "'Trail1', 'Trail summary 1', 'Trail Desc1', 'Easy', 'Location1', 11.1, 1.1, 'Loop', 1,  '2024-11-19 16:15:10' ",
+    "'Trail2', 'Trail summary 2', 'Trail Desc2', 'Easy', 'Location2', 22.2, 2.2, 'Loop', 2,  '2024-11-19 16:25:10' ",
+    "'Trail3', 'Trail summary 3', 'Trail Desc3', 'Easy', 'Location3', 33.3, 3.3, 'Loop', 3,  '2024-11-19 16:35:10' ",
+]    
 conn = pyodbc.connect(conn_str)
 cursor = conn.cursor()
 
-Columns = [
-    'TrailID INT IDENTITY (1,1) PRIMARY KEY',
-    'Trail_name VARCHAR(60) UNIQUE',
-    'Trail_Summary VARCHAR(6000)',
-    'Trail_Description VARCHAR(6000)',
-    'Difficulty VARCHAR (10)',
-    'Location VARCHAR (100)',
-    'Length FLOAT',
-    'Elevation_gain FLOAT',
-    'Route_type VARCHAR(10)',
-    'OwnerID INT',
-    'timestamp DATETIME',
-]
+for trail_data in Trails:
+    insert_cmd = f"INSERT INTO TrailTest VALUES ({trail_data})"
+    cursor.execute(insert_cmd)
 
-create_table_cmd = f"CREATE TABLE TrailTest ({','.join(Columns)})"
-cursor.execute(create_table_cmd)
 cursor.commit()
-

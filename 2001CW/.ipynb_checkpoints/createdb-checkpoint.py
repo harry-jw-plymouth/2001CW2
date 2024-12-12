@@ -13,7 +13,7 @@ username = 'HWatton'
 password = 'IfrW391*'
 driver =  '{ODBC Driver 17 for SQL Server}'
 
- conn_str = (
+conn_str = (
     f'DRIVER={driver};'
     f'SERVER={server};' 
     f'DATABASE={database};'
@@ -29,7 +29,7 @@ conn = pyodbc.connect(conn_str)
 cursor = conn.cursor()
 
 Columns = [
-    'TrailID INT IDENTITY (1,1), PRIMARY KEY',
+    'TrailID INT IDENTITY (1,1) PRIMARY KEY',
     'Trail_name VARCHAR(60) UNIQUE',
     'Trail_Summary VARCHAR(6000)',
     'Trail_Description VARCHAR(6000)',
@@ -42,7 +42,7 @@ Columns = [
     'timestamp DATETIME',
 ]
 
-create_table_cmd = f"CREATE TABLE Trail ({','.join(columns)})"
+create_table_cmd = f"CREATE TABLE TrailTest ({','.join(Columns)})"
 cursor.execute(create_table_cmd)
 cursor.commit()
 

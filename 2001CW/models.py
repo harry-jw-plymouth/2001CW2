@@ -5,6 +5,15 @@ import pytz
 
 from config import db, ma
 
+class Trail_Feature(db.model):
+    __tablename__ = "Trail_FeatureTest"
+    TrailID = db.column(db.Integer, primary_key=True)
+    Trail_FeatureID = db.column(db.Integer, primary_key=True)
+    timestamp = db.Column(
+        db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
+        onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
+    )
+
 class Trail(db.Model):
     __tablename__ = "TrailTest"
     TrailId=db.Column(db.Integer, primary_key=True)
@@ -20,6 +29,14 @@ class Trail(db.Model):
         db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
         onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
     )
+    trail_features = db.relationship(
+        Trail_Feature,
+        backref="Trail",
+        cascade="all, delete, delete-orphan",
+        single_parent=True,
+        order_by="desc(Trail_Feature.timestamp)"
+    )
+    
 
 class TrailSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

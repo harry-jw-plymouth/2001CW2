@@ -33,7 +33,7 @@ conn = pyodbc.connect(conn_str)
 cursor = conn.cursor()
 
 for trail_data in Trails:
-    insert_cmd = f"INSERT INTO TrailTest VALUES ({trail_data})"
+    insert_cmd = f"INSERT INTO CW2.Trail VALUES ({trail_data})"
     cursor.execute(insert_cmd)
 
 cursor.commit()

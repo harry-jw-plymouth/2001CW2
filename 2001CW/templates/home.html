@@ -8,7 +8,12 @@
 </head>
 <body>
     <h1>
-        Hello, World!
+        Hello, Trails!
     </h1>
+    <ul>
+        {% for trail in trails %}
+        <li>{{ trail.TrailID }} {{ trail.Trail_name}}</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

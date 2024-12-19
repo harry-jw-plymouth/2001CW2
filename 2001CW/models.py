@@ -1,18 +1,26 @@
 # models.py
 
 from datetime import datetime
+from marshmallow_sqlalchemy import fields
+from sqlalchemy import inspect
 import pytz
 
 from config import db, ma
 
-class Trail_Feature(db.model):
+class Trail_Feature(db.Model):
     __tablename__ = "Trail_FeatureTest"
-    TrailID = db.column(db.Integer, primary_key=True)
-    Trail_FeatureID = db.column(db.Integer, primary_key=True)
+    TrailID = db.Column(db.Integer, primary_key=True)
+    Trail_FeatureID = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(
         db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
         onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
     )
+class Trail_FeatureSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = Trail_Feature
+        load_instance = True
+        sqla_session = db.session
+        include_fk = True
 
 class Trail(db.Model):
     __tablename__ = "TrailTest"
@@ -29,21 +37,24 @@ class Trail(db.Model):
         db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
         onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
     )
-    trail_features = db.relationship(
-        Trail_Feature,
-        backref="Trail",
-        cascade="all, delete, delete-orphan",
-        single_parent=True,
-        order_by="desc(Trail_Feature.timestamp)"
-    )
+   # trail_features = db.relationship(
+    #    Trail_Feature,
+     #   backref="trail",
+      #  cascade="all, delete, delete-orphan",
+       # single_parent=True,
+        #order_by="desc(Trail_Feature.timestamp)"
+    #)
     
 
 class TrailSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Trail
         load_instance = True
-        sql_session = db.session
+        sqla_session = db.session
+        include_relationships = True
+    trail_features = fields.Nested(Trail_FeatureSchema, many=True)
 
+trail_feature_schema = Trail_FeatureSchema()
 trail_schema = TrailSchema()
 trails_schema = TrailSchema(many=True)
     

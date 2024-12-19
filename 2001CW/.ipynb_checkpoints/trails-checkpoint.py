@@ -2,8 +2,9 @@
 
 #from datetime import datetime 
 from flask import abort, make_response
+import pyodbc
 
-from config import db
+from config import db, ma
 from models import Trail, trail_schema, trails_schema
 
 

@@ -8,7 +8,7 @@ from config import db, ma
 
 class Trail(db.Model):
     __tablename__ = "TrailTest"
-    TrailId=db.Column(db.Integer, primary_key=True)
+    TrailID=db.Column(db.Integer, primary_key=True)
     Trail_name=db.Column(db.String(60), unique=True)
     Trail_Summary=db.Column(db.String(6000))
     Trail_Description=db.Column(db.String(6000))

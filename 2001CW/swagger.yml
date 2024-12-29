@@ -44,7 +44,14 @@ components:
       required: True 
       schema:
         type: "integer"
-         
+    UserID:
+      name: "UserID"
+      description: "ID of the user"
+      in: path
+      required: True
+      schema: 
+        type: "integer"
+      
 
 paths:
   /trails:
@@ -109,3 +116,14 @@ paths:
       responses:
         "204":
           description: "Successfully deleted trail"
+  /TUser/{UserID}:
+    get:
+      operationID: "TUsers.read_one"
+      tags:
+        - TUsers
+      summary: "Read one user"
+      parameters:
+        - $ref: "#/components/parameters/UserID"
+      responses:
+        "200":
+          description: "Successfully read one User"

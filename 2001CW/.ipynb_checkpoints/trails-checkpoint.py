@@ -29,7 +29,7 @@ conn = pyodbc.connect(
     'Trusted_Connection=No'
 )
 cursor = conn.cursor()
-cursor.execute("SELECT * FROM TrailTest")
+cursor.execute("SELECT * FROM CW2.Trail")
 ts = cursor.fetchall()
 for trail in ts:
         print(trail)

@@ -36,6 +36,16 @@ components:
           type: "string"
         OwnerID:
           type: "integer"
+    TUser:
+      required:
+        - UserID
+      properties:
+        UserID:
+          type: "integer"
+        Email_address: 
+          type: "string"
+        Role:
+          type: "string"
   parameters:
     TrailID:
       name: "TrailID"
@@ -116,14 +126,61 @@ paths:
       responses:
         "204":
           description: "Successfully deleted trail"
+  /TUser:
+    get:
+      operationId: "users.create"
+      tags: 
+        - Users
+      summary: "Create a user "
+      requestBody:
+        description: "User to create" 
+        required: True
+        content:
+         application/json:
+          schema:
+            x-body-name: "TUser"
+            $ref: "#/components/schemas/TUser"
+      responses:
+        "201":
+          description: "Successfully created user"
+
   /TUser/{UserID}:
     get:
-      operationID: "TUsers.read_one"
+      operationId: "users.read_one"
       tags:
-        - TUsers
+        - Users
       summary: "Read one user"
       parameters:
         - $ref: "#/components/parameters/UserID"
       responses:
         "200":
           description: "Successfully read one User"
+    put:
+      tags:
+        - Users
+      operationId: "users.update"
+      summary: "update a user"
+      parameters:
+        - $ref: "#/components/parameters/UserID"
+      responses:
+        "200":
+          description: "Successfully updated user"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "tuser"
+              type: "object"
+              properties:
+                content:
+                 type: "string"
+    delete:
+      tags:
+        - Users
+      operationId: "users.delete"
+      summary: "Delete a user"
+      parameters: 
+        - $ref: "#/components/parameters/UserID"
+      responses:
+        "204" :
+          description: "Successfully deleted note"

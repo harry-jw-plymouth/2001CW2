@@ -1,6 +1,7 @@
 # models.py
 
 from datetime import datetime
+from marshmallow_sqlalchemy import fields
 import pytz
 
 from config import db, ma
@@ -36,7 +37,7 @@ class Trail(db.Model):
     Length=db.Column(db.Float)
     Elevation_gain=db.Column(db.Float)
     Route_type=db.Column(db.String(10))
-    OwnerID=db.Column(db.Integer)
+    OwnerID=db.Column(db.Integer, db.ForeignKey("CW2.TUser.UserID"))
     timestamp = db.Column(
         db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
         onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
@@ -63,10 +64,11 @@ class TrailSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         sql_session = db.session
         include_fk = True
+    
         
-class TUSer(db.Model):
+class TUser(db.Model):
     __tablename__ = "CW2.TUser"
-    UserID=db.Column(db.integer, primary_key=True, autoincrement=True)
+    UserID=db.Column(db.Integer, primary_key=True, autoincrement=True)
     Email_address=db.Column(db.String(60))
     Role=db.Column(db.String(20))
     timestamp = db.Column(
@@ -74,7 +76,7 @@ class TUSer(db.Model):
         onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
     )
     trails = db.relationship(
-        TUser,
+        Trail,
         backref="CW2.TUser",
         cascade="all, delete, delete-orphan",
         single_parent=True,
@@ -87,9 +89,11 @@ class TUserSchema(ma.SQLAlchemyAutoSchema):
         Load_instance = True
         sqla_session = db.session
         include_relationships = True
+    trails = fields.Nested(TrailSchema, many=True)
         
 tusers=TUserSchema(many=True)
+tuser_schema = TUserSchema()
 trail_schema = TrailSchema()
-trails_schema = fields.Nested(TrailSchema,many=True)
+trails_schema = TrailSchema(many =True)
     
 

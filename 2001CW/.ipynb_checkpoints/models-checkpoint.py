@@ -7,23 +7,53 @@ import pytz
 from config import db, ma
 
 
-    
 
-#class Trail_Feature(db.Model):
-    #__tablename__ = "CW2.Trail_Feature"
-    #TrailID=db.Column(db.Integer, primary_key=True, db.ForeignKey("TrailTest.TrailID"))
-    #Feature_ID=db.Column(db.Integer, primary_key=True)
-    #timestamp = db.Column(
-     #   db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
-      #  onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
-    #)
+class Trail_LocationPt(db.Model):
+    __tablename__ = "Cw2.Trail_LocationPt"
+    TrailID=db.Column(db.Integer, primary_key=True)
+    Location_Point = db.Column(db.Integer, primary_key=True)
+    Order_no = db.Column(db.Integer)
+    timestamp = db.Column(
+        db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
+        onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
+    )
 
-#class Trail_FeatureSchema(ma.SQLAlchemyAutoSchema):
- #   class Meta:
-  #      model = Trail_Feature
-   #     load_instance = True
-    #    sqla_session = db.session
-     #   include_fk = True
+class Trail_LocationPtSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Trail_LocationPt
+        load_instance = True
+        sql_session = db.session
+
+class Trail_Feature(db.Model):
+    __tablename__ = "CW2.Trail_Feature"
+    TrailID=db.Column(db.Integer, primary_key=True)
+    Feature_ID=db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(
+        db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
+        onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
+    )
+
+class Trail_FeatureSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Trail_Feature
+        load_instance = True
+        sql_session = db.session
+
+
+class Feature(db.Model):
+    __tablename__ = "CW2.Feature"
+    Feature_ID=db.Column(db.Integer, primary_key=True)
+    Name=db.Column(db.String(30))
+    timestamp = db.Column(
+        db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
+        onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
+    )
+
+class FeatureSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model=Feature
+        load_instance = True
+        sql_session = db.session
     
 
 class Trail(db.Model):
@@ -90,9 +120,15 @@ class TUserSchema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
         include_relationships = True
     trails = fields.Nested(TrailSchema, many=True)
-        
+    
+traillocationpt_schema = Trail_LocationPtSchema()
+traillocationpts_schema = Trail_LocationPtSchema(many=True)
+trailfeature_schema = Trail_FeatureSchema()
+trailfeatures_schema = Trail_FeatureSchema(many=True)
 tusers=TUserSchema(many=True)
 tuser_schema = TUserSchema()
+feature_schema = FeatureSchema()
+features_schema = FeatureSchema(many=True)
 trail_schema = TrailSchema()
 trails_schema = TrailSchema(many =True)
     

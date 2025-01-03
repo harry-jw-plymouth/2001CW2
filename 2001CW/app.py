@@ -4,6 +4,7 @@ from flask import render_template
 #import connexion
 import config
 from models import Trail
+from models import Feature
 
 app = config.connex_app
 app.add_api(config.basedir / "swagger.yml")

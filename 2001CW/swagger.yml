@@ -46,7 +46,45 @@ components:
           type: "string"
         Role:
           type: "string"
+    Feature:
+      type: "object"
+      required:
+        - Feature_ID
+      properties:
+        Feature_ID:
+          type: "integer"
+        Name:
+          type: "string"
+    Trail_Feature:
+      type: "object"
+      required:
+        - Feature_ID
+        - TrailID
+      properties:
+        Feature_ID:
+          type: "integer"
+        TrailID:
+          type: "integer"
+    traillocationpoint:
+      type: "object"
+      required:
+        - TrailID
+        - Location_Point
+      properties:
+        TrailID:
+          type: "integer"
+        Location_Point:
+          type: "integer"
+        Order_no:
+          type: "integer" 
   parameters:
+    FeatureID:
+      name: "FeatureID"
+      description: "ID of trail to get"
+      in: path
+      required: True 
+      schema:
+        type: "integer"
     TrailID:
       name: "TrailID"
       description: "ID of trail to get"
@@ -61,7 +99,14 @@ components:
       required: True
       schema: 
         type: "integer"
-      
+    LocationPoint:
+      name: "LocationPoint"
+      description: "Point on a trail"
+      in: path
+      required: true
+      schema:
+        type: "integer"
+    
 
 paths:
   /trails:
@@ -143,7 +188,6 @@ paths:
       responses:
         "201":
           description: "Successfully created user"
-
   /TUser/{UserID}:
     get:
       operationId: "users.read_one"
@@ -184,3 +228,160 @@ paths:
       responses:
         "204" :
           description: "Successfully deleted note"
+  /features/{FeatureID}:
+    get:
+      operationId: "features.read_one"
+      tags:
+        - Features
+      summary: "read one feature"
+      parameters:
+        - $ref: "#/components/parameters/FeatureID"
+      responses:
+        200:
+          description: "Successfully read one Feature"
+    put:
+      tags:
+        - Features
+      operationId: "features.update"
+      summary: "update a feature"
+      parameters:
+        - $ref: "#/components/parameters/FeatureID"
+      responses:
+        "200":
+          description: "Successfully updated Feature"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "feature"
+              type: "object"
+              properties:
+                content:
+                 type: "string"
+    delete:
+      tags:
+        - Features
+      operationId: "features.delete"
+      summary: "Delete a Feature"
+      parameters: 
+        - $ref: "#/components/parameters/FeatureID"
+      responses:
+        "204" :
+          description: "Successfully deleted Feature"
+  /features:
+    post:
+      operationId: "features.create"
+      tags:
+        - Features
+      summary: "Create a feature"
+      requestBody:
+        description: "feature to create"
+        required: True 
+        content: 
+          application/json:
+            schema:
+              x-body-name: "feature"
+              $ref: "#/components/schemas/Feature"
+      responses:
+        "201":
+          description: "Successfully created feature"
+  /trail_features:
+    get:
+      operationId: "trail_features.read_all"
+      tags:
+        - Trail_Features
+      summary: "Read the list of trail features"
+      responses:
+        "200":
+          description: "Successfully read trail features list"
+    post:
+      operationId: "trail_features.create"
+      tags:
+        - Trail_Features
+      summary: "Create a trail feature"
+      requestBody:
+        description: "Trail feature to create"
+        required: True 
+        content: 
+          application/json:
+            schema:
+              x-body-name: "trail_features"
+              $ref: "#/components/schemas/Trail_Feature"
+      responses:
+        "201":
+          description: "Successfully created trail"
+  /trail_features/{TrailID}:
+    get:
+      operationId: "trail_features.read_one_trails_features"
+      tags:
+        - Trail_Features
+      summary: "read one feature"
+      parameters:
+        - $ref: "#/components/parameters/TrailID"
+      responses:
+        200:
+          description: "Successfully read one trails features"
+  /trail_features/{FeatureID}/{TrailID}:
+    delete:
+      tags:
+        - Trail_Features
+      operationId: "trail_features.delete"
+      summary: "Delete a Feature of a trail"
+      parameters: 
+        - $ref: "#/components/parameters/FeatureID"
+        - $ref: "#/components/parameters/TrailID"
+      responses:
+        "204" :
+          description: "Successfully deleted Feature of trail"
+  /trail_locationpt:
+    get:
+      operationId: "trail_locationpt.read_all"
+      tags:
+        - Trail_locationpt
+      summary: "Read the list of trail points"
+      responses:
+        "200":
+          description: "Successfully read trail points list "
+    post:
+      operationId: "trail_locationpt.create"
+      tags:
+        - Trail_locationpt
+      summary: "Create a trail point"
+      requestBody:
+        description: "point to create"
+        required: True 
+        content: 
+          application/json:
+            schema:
+              x-body-name: "trail_locationpt"
+              $ref: "#/components/schemas/traillocationpoint"
+      responses:
+        "201":
+          description: "Successfully created point for trail" 
+  /trail_locationpt/{TrailID}:
+    get:
+      operationId: "trail_locationpt.read_one_trails_points"
+      tags:
+        - Trail_locationpt
+      summary: "read one feature"
+      parameters:
+        - $ref: "#/components/parameters/TrailID"
+      responses:
+        200:
+          description: "Successfully read one trails location points"
+  /trail_locationpt/{LocationPoint}/{TrailID}:  
+    delete:
+      tags:
+        - Trail_locationpt
+      operationId: "trail_locationpt.delete"
+      summary: "Delete a point of a trail"
+      parameters: 
+        - $ref: "#/components/parameters/LocationPoint"
+        - $ref: "#/components/parameters/TrailID"
+      responses:
+        "204" :
+          description: "Successfully deleted point of trail"
+
+
+
+    

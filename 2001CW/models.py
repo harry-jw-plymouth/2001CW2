@@ -7,6 +7,23 @@ import pytz
 from config import db, ma
 
 
+class Location_Pt(db.Model):
+    __tablename__ = "Location_Pt"
+    Location_Point = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Latitude =db.Column(db.Float)
+    Longitude = db.Column(db.Float)
+    Description = db.Column(db.String(200))
+    timestamp = db.Column(
+        db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
+        onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
+    )
+
+class Location_PtSchema(ma.SQLAlchemyAutoSchema):
+    class Meta: 
+        model = Location_Pt
+        load_instance = True
+        sql_Session = db.session
+    
 
 class Trail_LocationPt(db.Model):
     __tablename__ = "Cw2.Trail_LocationPt"
@@ -57,7 +74,7 @@ class FeatureSchema(ma.SQLAlchemyAutoSchema):
     
 
 class Trail(db.Model):
-    __tablename__ = "CW2.Trail"
+    __tablename__ = "Trail"
     TrailID=db.Column(db.Integer, primary_key=True)
     Trail_name=db.Column(db.String(60), unique=True)
     Trail_Summary=db.Column(db.String(6000))
@@ -67,7 +84,7 @@ class Trail(db.Model):
     Length=db.Column(db.Float)
     Elevation_gain=db.Column(db.Float)
     Route_type=db.Column(db.String(10))
-    OwnerID=db.Column(db.Integer, db.ForeignKey("CW2.TUser.UserID"))
+    OwnerID=db.Column(db.Integer, db.ForeignKey("TUser.UserID"))
     timestamp = db.Column(
         db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
         onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
@@ -97,7 +114,7 @@ class TrailSchema(ma.SQLAlchemyAutoSchema):
     
         
 class TUser(db.Model):
-    __tablename__ = "CW2.TUser"
+    __tablename__ = "TUser"
     UserID=db.Column(db.Integer, primary_key=True, autoincrement=True)
     Email_address=db.Column(db.String(60))
     Role=db.Column(db.String(20))
@@ -107,7 +124,7 @@ class TUser(db.Model):
     )
     trails = db.relationship(
         Trail,
-        backref="CW2.TUser",
+        backref="TUser",
         cascade="all, delete, delete-orphan",
         single_parent=True,
         order_by="desc(Trail.timestamp)"
@@ -120,12 +137,14 @@ class TUserSchema(ma.SQLAlchemyAutoSchema):
         sqla_session = db.session
         include_relationships = True
     trails = fields.Nested(TrailSchema, many=True)
-    
+
+location_pt_schema = Location_PtSchema()
+location_pts_schema = Location_PtSchema(many = True)
 traillocationpt_schema = Trail_LocationPtSchema()
 traillocationpts_schema = Trail_LocationPtSchema(many=True)
 trailfeature_schema = Trail_FeatureSchema()
 trailfeatures_schema = Trail_FeatureSchema(many=True)
-tusers=TUserSchema(many=True)
+tusers_schema=TUserSchema(many=True)
 tuser_schema = TUserSchema()
 feature_schema = FeatureSchema()
 features_schema = FeatureSchema(many=True)

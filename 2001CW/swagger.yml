@@ -77,6 +77,19 @@ components:
           type: "integer"
         Order_no:
           type: "integer" 
+    Location_Pt:
+      type: "object"
+      required: 
+        - Location_Point
+      properties:
+        Location_Point:
+          type: "integer"
+        Latitude:
+          type: "number" 
+        Longitude:
+          type: "number"
+        Description:
+          type: "string"
   parameters:
     FeatureID:
       name: "FeatureID"
@@ -172,7 +185,7 @@ paths:
         "204":
           description: "Successfully deleted trail"
   /TUser:
-    get:
+    post:
       operationId: "users.create"
       tags: 
         - Users
@@ -183,7 +196,7 @@ paths:
         content:
          application/json:
           schema:
-            x-body-name: "TUser"
+            x-body-name: "user"
             $ref: "#/components/schemas/TUser"
       responses:
         "201":
@@ -381,7 +394,69 @@ paths:
       responses:
         "204" :
           description: "Successfully deleted point of trail"
-
+  /LocationPt:
+    get:
+      operationId: "location_pt.read_all"
+      tags:
+        - Location_Point
+      summary: "Read the list of location points"
+      responses:
+        "200":
+          description: "Successfully read location points list "
+    post:
+      operationId: "location_pt.create"
+      tags:
+        - Location_Point
+      summary: "Create a location point"
+      requestBody:
+        description: "point to create"
+        required: True 
+        content: 
+          application/json:
+            schema:
+              x-body-name: "locationpt"
+              $ref: "#/components/schemas/Location_Pt"
+      responses:
+        "201":
+          description: "Successfully created point"
+  /LocationPt/{LocationPoint}:
+    get:
+      operationId: "location_pt.read_one"
+      tags:
+        - Location_Point
+      summary: "Read one point"
+      parameters: 
+        - $ref: "#/components/parameters/LocationPoint"
+      responses:
+        "200":
+          description: "Successfully read point"
+    put:
+      tags:
+        - Location_Point
+      operationId: "location_pt.update"
+      summary: "update a location point"
+      parameters:
+        - $ref: "#/components/parameters/LocationPoint"
+      responses:
+        "200":
+          description: "Successfully updated Location point"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "point"
+              $ref: "#/components/schemas/Location_Pt"
+    delete:
+      tags:
+        - Location_Point
+      operationId: "location_pt.delete"
+      summary: "Delete a point"
+      parameters:
+        - $ref: "#/components/parameters/LocationPoint"
+      responses:
+        "204":
+          description: "Successfully deleted point"
+  
 
 
     

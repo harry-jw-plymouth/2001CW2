@@ -1,9 +1,11 @@
 # users.py
 
+from datetime import datetime 
 from flask import abort, make_response
+import pyodbc
 
 from config import db
-from models import TUser, tuser_schema
+from models import TUser, tuser_schema, tusers_schema
 
 def read_one(UserID):
     print(UserID)
@@ -30,7 +32,7 @@ def update(UserID, tuser):
 def delete(UserID):
     existing_user = TUser.query.get(UserID)
     if existing_user:
-        db.session.delete(exisitng_note)
+        db.session.delete(existing_note)
         db.session.commit()
         return make_response(f"{UserID} successfully deleted",204)
     else:
@@ -38,7 +40,7 @@ def delete(UserID):
 
 def create(user):
     UserID = user.get("UserID")
-    existing_user = User.query.filter(User.UserID == UserID).one_or_none()
+    existing_user = TUser.query.filter(TUser.UserID == UserID).one_or_none()
     if existing_user is None:
         new_user = tuser_schema.load(user, session=db.session)
         db.session.add(new_user)

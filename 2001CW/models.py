@@ -26,14 +26,14 @@ class Location_PtSchema(ma.SQLAlchemyAutoSchema):
     
 
 class Trail_LocationPt(db.Model):
-    __tablename__ = "Cw2.Trail_LocationPt"
+    __tablename__ = "Trail_LocationPt"
     TrailID=db.Column(db.Integer, primary_key=True)
     Location_Point = db.Column(db.Integer, primary_key=True)
     Order_no = db.Column(db.Integer)
-    timestamp = db.Column(
-        db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
-        onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
-    )
+ #   timestamp = db.Column(
+   #    db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
+     #   onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
+  #  )
 
 class Trail_LocationPtSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -42,7 +42,7 @@ class Trail_LocationPtSchema(ma.SQLAlchemyAutoSchema):
         sql_session = db.session
 
 class Trail_Feature(db.Model):
-    __tablename__ = "CW2.Trail_Feature"
+    __tablename__ = "Trail_Feature"
     TrailID=db.Column(db.Integer, primary_key=True)
     Feature_ID=db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(
@@ -58,7 +58,7 @@ class Trail_FeatureSchema(ma.SQLAlchemyAutoSchema):
 
 
 class Feature(db.Model):
-    __tablename__ = "CW2.Feature"
+    __tablename__ = "Feature"
     Feature_ID=db.Column(db.Integer, primary_key=True)
     Name=db.Column(db.String(30))
     timestamp = db.Column(

@@ -7,12 +7,16 @@ import pyodbc
 from config import db
 from models import TUser, tuser_schema, tusers_schema
 
+def read_all():
+    users = TUser.query.all()
+    return tusers_schema.dump(users)
+
 def read_one(UserID):
     print(UserID)
-    user = TUser.query.get(UserID)
+    user = TUser.query.filter(TUser.UserID == UserID).one_or_none()
     
     if user is not None:
-        return tuser_schema.dump(TUser)
+        return tuser_schema.dump(user)
     else:
         abort(
             404, f"User with ID {UserID} not found"
@@ -32,7 +36,7 @@ def update(UserID, tuser):
 def delete(UserID):
     existing_user = TUser.query.get(UserID)
     if existing_user:
-        db.session.delete(existing_note)
+        db.session.delete(existing_user)
         db.session.commit()
         return make_response(f"{UserID} successfully deleted",204)
     else:

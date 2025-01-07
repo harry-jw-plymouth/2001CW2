@@ -8,16 +8,16 @@ from models import Trail_LocationPt, traillocationpt_schema, traillocationpts_sc
 
 def read_all():
     trailocpoints = Trail_LocationPt.query.all()
-    return traillocationpt_schema.dump(trailocpoints)
+    return traillocationpts_schema.dump(trailocpoints)
 
 def read_one_trails_points(TrailID):
-    trailpoints = Trail_LocationPt.query.all().filter(Trail_LocationPt.TrailID == TrailID).one_or_none()
-    return traillocationpt_schema.dump(trailpoints)
+    trailpoints = Trail_LocationPt.query.filter(Trail_LocationPt.TrailID == TrailID).all()
+    return traillocationpts_schema.dump(trailpoints)
 
 def create(traillocationpoint):
     PointID = traillocationpoint.get("Location_Point")
     TrailID = traillocationpoint.get("TrailID")
-    existing_traillocpoint = Trail_LocationPt.query.filter(Trail_LocationPt.Location_Point == ID).filter(Trail_LocationPt.Trail_ID == TrailID).one_or_none()
+    existing_traillocpoint = Trail_LocationPt.query.filter(Trail_LocationPt.Location_Point == PointID, Trail_LocationPt.TrailID == TrailID).one_or_none()
     if  existing_traillocpoint is None:
         new_traillocpoint = traillocationpt_schema.load(Trail_LocationPt, session=db.session)
         db.session.add(new_traillocpoint)

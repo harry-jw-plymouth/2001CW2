@@ -81,7 +81,7 @@ TRAILS2 = {
 
 def read_all():
     trails = Trail.query.all()        
-    return trail_schema.dump(trails)
+    return trails_schema.dump(trails)
     #return list(TRAILS2.values())
 
 
@@ -103,12 +103,22 @@ def read_one(TrailID):
     else:
         abort(404, f"Trail with id {TrailID} not found")
 
-def update(TrailID, Trail):
+def update(TrailID, trail):
     existing_trail = Trail.query.filter(Trail.TrailID == TrailID).one_or_none() 
     if existing_trail:
         update_trail = trail_schema.load(trail, session=db.session)
-        existing_trail.TrailID = update_trail.TrailID
-        db.session.merge(existing_trail), 201
+        existing_trail.Trail_name = update_trail.Trail_name
+        existing_trail.Trail_Summary = update_trail. Trail_Summary
+        existing_trail.Trail_Description = update_trail.Trail_Description
+        existing_trail.Difficulty = update_trail.Difficulty
+        existing_trail.Location = update_trail.Location
+        existing_trail.Length = update_trail.Length
+        existing_trail.Elevation_gain = update_trail.Elevation_gain
+        existing_trail.Route_type = update_trail.Route_type
+        existing_trail.OwnerID = update_trail.OwnerID
+        db.session.merge(existing_trail)
+        db.session.commit()
+        return trail_schema.dump(existing_trail), 201
     else:
         abort(
             404, f"Trail with ID {TrailID} not found"
@@ -117,7 +127,7 @@ def update(TrailID, Trail):
 def delete(TrailID):
     existing_trail = Trail.query.filter(Trail.TrailID == TrailID).one_or_none()
     
-    if exisiting_trail:
+    if existing_trail:
         db.session.delete(existing_trail)
         db.session.commit()
         return make_response(f"{TrailID} successfully deleted", 200)

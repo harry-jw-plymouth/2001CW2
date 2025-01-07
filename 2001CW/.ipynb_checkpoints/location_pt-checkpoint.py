@@ -9,7 +9,7 @@ from models import Location_Pt, location_pt_schema, location_pts_schema
 
 def read_all():
     pts = Location_Pt.query.all()        
-    return location_pt_schema.dump(pts)
+    return location_pts_schema.dump(pts)
     #return list(TRAILS2.values())
 
 
@@ -35,8 +35,12 @@ def update(LocationPoint, point):
     existing_pt = Location_Pt.query.filter(Location_Pt.Location_Point == LocationPoint).one_or_none() 
     if existing_pt:
         update_pt = location_pt_schema.load(point, session=db.session)
-        existing_pt.Location_Point = update_pt.Location_Point
+        existing_pt.Latitude = update_pt.Latitude
+        existing_pt.Longitude = update_pt.Longitude
+        existing_pt.Description = update_pt.Description
         db.session.merge(existing_pt), 201
+        db.session.commit()
+        return location_pt_schema.dump(existing_pt)
     else:
         abort(
             404, f"Point with ID {LocationPoint} not found"

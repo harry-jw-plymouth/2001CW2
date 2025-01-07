@@ -29,9 +29,9 @@ components:
         Location:
           type: "string"
         Length:
-          type: "integer"
+          type: "number"
         Elevation_gain:
-          type: "integer"
+          type: "number"
         Route_type:
           type: "string"
         OwnerID:
@@ -142,7 +142,7 @@ paths:
         content: 
           application/json:
             schema:
-              x-body-name: "trails"
+              x-body-name: "trail"
               $ref: "#/components/schemas/Trail"
       responses:
         "201":
@@ -172,7 +172,7 @@ paths:
         content:
           application/json:
             schema:
-              x-body-name: "trails"
+              x-body-name: "trail"
               $ref: "#/components/schemas/Trail"
     delete:
       tags:
@@ -185,6 +185,14 @@ paths:
         "204":
           description: "Successfully deleted trail"
   /TUser:
+    get:
+      operationId: "users.read_all"
+      tags:
+        - Users
+      summary: "Read the list of users"
+      responses:
+        "200":
+          description: "Successfully read users list"
     post:
       operationId: "users.create"
       tags: 
@@ -282,6 +290,14 @@ paths:
         "204" :
           description: "Successfully deleted Feature"
   /features:
+    get:
+      operationId: "features.read_all"
+      tags:
+        - "Features"
+      summary: "Read the list of features"
+      responses:
+        "200":
+          description: "Successfully read features list"
     post:
       operationId: "features.create"
       tags:
@@ -318,7 +334,7 @@ paths:
         content: 
           application/json:
             schema:
-              x-body-name: "trail_features"
+              x-body-name: "trailfeature"
               $ref: "#/components/schemas/Trail_Feature"
       responses:
         "201":
@@ -366,7 +382,7 @@ paths:
         content: 
           application/json:
             schema:
-              x-body-name: "trail_locationpt"
+              x-body-name: "traillocationpoint"
               $ref: "#/components/schemas/traillocationpoint"
       responses:
         "201":

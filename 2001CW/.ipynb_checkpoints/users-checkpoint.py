@@ -11,6 +11,18 @@ def read_all():
     users = TUser.query.all()
     return tusers_schema.dump(users)
 
+def read_user(UserName,PassWord):
+    user = TUser.query.filter(TUser.User_Name == UserName).one_or_none()
+    if user is not None:
+        if user.PassWord==PassWord:
+            return tuser_schema.dump(user)
+        else:
+            abort(406, f"Invalid details")
+    else:
+        abort(
+            404, f"User with name {UserName} not found"
+        )
+
 def read_one(UserID):
     print(UserID)
     user = TUser.query.filter(TUser.UserID == UserID).one_or_none()
@@ -26,7 +38,7 @@ def update(UserID, tuser):
     existing_user = TUser.query.get(UserID)
     if existing_user:
         update_user = tuser_schema.load(tuser)
-        existing_user.conten = update_tuser.content
+        existing_user.content = update_tuser.content
         db.session.merge(existing_user)
         db.session.commit()
         return tuser_schema.dump(existing_user), 201

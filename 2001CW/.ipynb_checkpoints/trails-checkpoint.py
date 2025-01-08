@@ -5,7 +5,7 @@ from flask import abort, make_response
 import pyodbc
 
 from config import db, ma
-from models import Trail, trail_schema, trails_schema
+from models import TUser, tuser_schema ,Trail, trail_schema, trails_schema
 
 def get_timestamp():
     return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
@@ -84,6 +84,23 @@ def read_all():
     return trails_schema.dump(trails)
     #return list(TRAILS2.values())
 
+def create_new(UserName,PassWord,trail):
+    user = TUser.query.filter(TUser.User_Name == UserName).one_or_none()
+    if user is not None:
+        if user.PassWord==PassWord:
+            if user.Role=="Admin":
+                new_trail = trail_schema.load(trail, session=db.session)
+                db.session.add(new_trail)
+                db.session.commit()
+                return trail_schema.dump(new_trail), 201
+            else:
+                abort(406, f"Must be admin to edit trails")
+        else:
+            abort(406, f"Invalid details")
+    else:
+        abort(
+            404, f"User with name {UserName} not found"
+        )
 
 def create(trail):
     TrailID = trail.get("TrailID")

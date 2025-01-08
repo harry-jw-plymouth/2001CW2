@@ -42,7 +42,7 @@ Columns = [
     'timestamp DATETIME',
 ]
 
-create_table_cmd = f"CREATE TABLE CW2.Trail ({','.join(Columns)})"
+create_table_cmd = f"CREATE TABLE CW2.NewTest ({','.join(Columns)})"
 cursor.execute(create_table_cmd)
 cursor.commit()
 

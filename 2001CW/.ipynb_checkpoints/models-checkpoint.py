@@ -7,6 +7,7 @@ import pytz
 from config import db, ma
 
 
+
 class Location_Pt(db.Model):
     __tablename__ = "Location_Pt"
     Location_Point = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -118,6 +119,8 @@ class TUser(db.Model):
     UserID=db.Column(db.Integer, primary_key=True, autoincrement=True)
     Email_address=db.Column(db.String(60))
     Role=db.Column(db.String(20))
+    User_Name=db.Column(db.String(100))
+    PassWord=db.Column(db.String(100))
     timestamp = db.Column(
         db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
         onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
@@ -129,7 +132,7 @@ class TUser(db.Model):
         single_parent=True,
         order_by="desc(Trail.timestamp)"
     )
-
+           
 class TUserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = TUser

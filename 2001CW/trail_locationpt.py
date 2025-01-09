@@ -4,7 +4,9 @@ from flask import make_response, abort
 
 from config import db
 from models import Trail_LocationPt, traillocationpt_schema, traillocationpts_schema
+import requests
 
+auth_url = 'https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users'
 
 def read_all():
     trailocpoints = Trail_LocationPt.query.all()

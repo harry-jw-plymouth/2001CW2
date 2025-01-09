@@ -3,12 +3,15 @@
 from datetime import datetime 
 from flask import abort, make_response
 import pyodbc
+import requests
 
 from config import db, ma
 from models import TUser, tuser_schema ,Trail, trail_schema, trails_schema
 
 def get_timestamp():
     return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
+
+auth_url = 'https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users'
 
 server = 'dist-6-505.uopnet.plymouth.ac.uk'
 database = 'COMP2001_HWatton'
@@ -35,83 +38,43 @@ for trail in ts:
         print(trail)
 #conn = pyodbc.connect(conn_str)
 
-TRAILS2 = {
-    1: {
-        "TrailID": 1,
-        "Trail_name": "Trail 1",
-        "Trail_Summary": "This is summary1",
-        "Trail_Description": "This is description 1",
-        "Difficulty": "Easy", 
-        "Location": "England,England,England",
-        "Length" : 34.4,
-        "Elevation_gain": 23.4,
-        "Route_type": "Loop",
-        "OwnerID": 1,
-        "timestamp": get_timestamp(),
-    },
-    2: {
-        "TrailID": 2,
-        "Trail_name": "Trail 2",
-        "Trail_Summary": "This is summary2",
-        "Trail_Description": "This is description 2",
-        "Difficulty": "Easy", 
-        "Location": "England,England,England",
-        "Length" : 33.2,
-        "Elevation_gain": 3.4,
-        "Route_type": "Loop",
-        "OwnerID": 2,
-        "timestamp": get_timestamp(),
-    },
-    3: {
-        "TrailID": 3,
-        "Trail_name": "Trail 3",
-        "Trail_Summary": "This is summary3",
-        "Trail_Description": "This is description 3",
-        "Difficulty": "Easy", 
-        "Location": "England,England,England",
-        "Length" : 24.3,
-        "Elevation_gain": 12.4,
-        "Route_type": "Loop",
-        "OwnerID": 3,
-        "timestamp": get_timestamp(),
-    }
-}
-
-
-
 def read_all():
     trails = Trail.query.all()        
     return trails_schema.dump(trails)
     #return list(TRAILS2.values())
 
-def create_new(UserName,PassWord,trail):
-    user = TUser.query.filter(TUser.User_Name == UserName).one_or_none()
-    if user is not None:
-        if user.PassWord==PassWord:
-            if user.Role=="Admin":
-                new_trail = trail_schema.load(trail, session=db.session)
-                db.session.add(new_trail)
-                db.session.commit()
-                return trail_schema.dump(new_trail), 201
+def create(Email,PassWord,trail):
+    credentials = {
+        'email' : Email, 
+        'password' : PassWord
+    }
+    response = requests.post(auth_url, json=credentials)
+    if response.status_code == 200:
+        try:
+            json_response = response.json()
+            print("Authenticated successfully:", json_response)
+            print(json_response[1])
+            if json_response[1] == 'True':
+                print("Log in success")
+                TrailID = trail.get("TrailID")
+                existing_trail = Trail.query.filter(Trail.TrailID == TrailID).one_or_none( )
+                if existing_trail is None:
+                    new_trail = trail_schema.load(trail, session=db.session)
+                    db.session.add(new_trail)
+                    db.session.commit()
+                    return trail_schema.dump(new_trail), 201
+                else:
+                    abort(406, f"Trail with ID {TrailID} already exists")
             else:
-                abort(406, f"Must be admin to edit trails")
-        else:
-            abort(406, f"Invalid details")
+                print (" Log in failed")
+                abort(406, f"Could not authenticate")
+                
+        except requests.JSONDecodeError:
+            print("Response is not valid JSON. Raw response content:")
+            print(response.text)
     else:
-        abort(
-            404, f"User with name {UserName} not found"
-        )
-
-def create(trail):
-    TrailID = trail.get("TrailID")
-    existing_trail = Trail.query.filter(Trail.TrailID == TrailID).one_or_none()
-    if existing_trail is None:
-        new_trail = trail_schema.load(trail, session=db.session)
-        db.session.add(new_trail)
-        db.session.commit()
-        return trail_schema.dump(new_trail), 201
-    else:
-        abort(406, f"Trail with ID {TrailID} already exists")
+        print(f"Authentication failed with status code {response.status_code} ")
+        print("Response content:", response.text)
 
 def read_one(TrailID):
     trail = Trail.query.filter(Trail.TrailID == TrailID).one_or_none()
@@ -120,35 +83,81 @@ def read_one(TrailID):
     else:
         abort(404, f"Trail with id {TrailID} not found")
 
-def update(TrailID, trail):
-    existing_trail = Trail.query.filter(Trail.TrailID == TrailID).one_or_none() 
-    if existing_trail:
-        update_trail = trail_schema.load(trail, session=db.session)
-        existing_trail.Trail_name = update_trail.Trail_name
-        existing_trail.Trail_Summary = update_trail. Trail_Summary
-        existing_trail.Trail_Description = update_trail.Trail_Description
-        existing_trail.Difficulty = update_trail.Difficulty
-        existing_trail.Location = update_trail.Location
-        existing_trail.Length = update_trail.Length
-        existing_trail.Elevation_gain = update_trail.Elevation_gain
-        existing_trail.Route_type = update_trail.Route_type
-        existing_trail.OwnerID = update_trail.OwnerID
-        db.session.merge(existing_trail)
-        db.session.commit()
-        return trail_schema.dump(existing_trail), 201
+def update(TrailID,Email,PassWord, trail):
+    credentials = {
+        'email' : Email, 
+        'password' : PassWord
+    }
+    response = requests.post(auth_url, json=credentials)
+    if response.status_code == 200:
+        try:
+            json_response = response.json()
+            print("Authenticated successfully:", json_response)
+            print(json_response[1])
+            if json_response[1] == 'True':
+                print("Log in success")
+                existing_trail = Trail.query.filter(Trail.TrailID == TrailID).one_or_none() 
+                if existing_trail:
+                    update_trail = trail_schema.load(trail, session=db.session)
+                    existing_trail.Trail_name = update_trail.Trail_name
+                    existing_trail.Trail_Summary = update_trail.Trail_Summary
+                    existing_trail.Trail_Description = update_trail.Trail_Description
+                    existing_trail.Difficulty = update_trail.Difficulty
+                    existing_trail.Location = update_trail.Location
+                    existing_trail.Length = update_trail.Length
+                    existing_trail.Elevation_gain = update_trail.Elevation_gain
+                    existing_trail.Route_type = update_trail.Route_type
+                    existing_trail.OwnerID = update_trail.OwnerID
+                    db.session.merge(existing_trail)
+                    db.session.commit()
+                    return trail_schema.dump(existing_trail), 201
+                else:
+                    abort(
+                        404, f"Trail with ID {TrailID} not found"
+                    )
+            else:
+                print (" Log in failed")
+                abort(406, f"Could not authenticate")
+                
+        except requests.JSONDecodeError:
+            print("Response is not valid JSON. Raw response content:")
+            print(response.text)
     else:
-        abort(
-            404, f"Trail with ID {TrailID} not found"
-        )
+        print(f"Authentication failed with status code {response.status_code} ")
+        print("Response content:", response.text)
 
-def delete(TrailID):
-    existing_trail = Trail.query.filter(Trail.TrailID == TrailID).one_or_none()
-    
-    if existing_trail:
-        db.session.delete(existing_trail)
-        db.session.commit()
-        return make_response(f"{TrailID} successfully deleted", 200)
+
+def delete(TrailID,Email,PassWord):
+    credentials = {
+        'email' : Email, 
+        'password' : PassWord
+    }
+    response = requests.post(auth_url, json=credentials)
+    if response.status_code == 200:
+        try:
+            json_response = response.json()
+            print("Authenticated successfully:", json_response)
+            print(json_response[1])
+            if json_response[1] == 'True':
+                print("Log in success")
+                existing_trail = Trail.query.filter(Trail.TrailID == TrailID).one_or_none()
+                if existing_trail:
+                    db.session.delete(existing_trail)
+                    db.session.commit()
+                    return make_response(f"{TrailID} successfully deleted", 200)
+                else:
+                    abort(
+                        404, f"Trail with id {TrailID} not found"
+                    )     
+            else:
+                print (" Log in failed")
+                abort(406, f"Could not authenticate")
+                
+        except requests.JSONDecodeError:
+            print("Response is not valid JSON. Raw response content:")
+            print(response.text)
     else:
-        abort(
-            404, f"Trail with id {TrailID} not found"
-        )
+        print(f"Authentication failed with status code {response.status_code} ")
+        print("Response content:", response.text)
+    
+    

@@ -1,7 +1,7 @@
 # models.py
 
 from datetime import datetime
-from marshmallow_sqlalchemy import fields
+from marshmallow_sqlalchemy import fields, SQLAlchemyAutoSchema, auto_field
 import pytz
 
 from config import db, ma
@@ -133,13 +133,12 @@ class TUser(db.Model):
         order_by="desc(Trail.timestamp)"
     )
            
-class TUserSchema(ma.SQLAlchemyAutoSchema):
+class TUserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = TUser
-        Load_instance = True
-        sqla_session = db.session
+        load_instance = True
         include_relationships = True
-    trails = fields.Nested(TrailSchema, many=True)
+   # trails = fields.Nested(TrailSchema, many=True)
 
 location_pt_schema = Location_PtSchema()
 location_pts_schema = Location_PtSchema(many = True)

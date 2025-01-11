@@ -13,8 +13,6 @@ from models import Location_Pt, location_pt_schema, location_pts_schema
 def read_all():
     pts = Location_Pt.query.all()        
     return location_pts_schema.dump(pts)
-    #return list(TRAILS2.values())
-
 
 def create(locationpt,Email,PassWord): 
     credentials = {
@@ -108,15 +106,3 @@ def delete(LocationPoint,Email,PassWord):
             print(response.text)
     else:
         print(f"Authentication failed with status code {response.status_code} ")
-
-    
-    existing_pt = Location_Pt.query.filter(Location_Pt.Location_Point == LocationPoint).one_or_none()
-    
-    if existing_pt:
-        db.session.delete(existing_pt)
-        db.session.commit()
-        return make_response(f"{LocationPoint} successfully deleted", 200)
-    else:
-        abort(
-            404, f"point with id {LocationPoint} not found"
-        )

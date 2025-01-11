@@ -24,17 +24,13 @@ class Location_PtSchema(ma.SQLAlchemyAutoSchema):
         model = Location_Pt
         load_instance = True
         sql_Session = db.session
-    
 
 class Trail_LocationPt(db.Model):
     __tablename__ = "Trail_LocationPt"
     TrailID=db.Column(db.Integer, primary_key=True)
     Location_Point = db.Column(db.Integer, primary_key=True)
     Order_no = db.Column(db.Integer)
- #   timestamp = db.Column(
-   #    db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
-     #   onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
-  #  )
+ #
 
 class Trail_LocationPtSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -90,20 +86,6 @@ class Trail(db.Model):
         db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
         onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
     )
-#   trail_features = db.relationship(
- #       TUser,
-  #      backref="CW2.Trail",
-   #     cascade="all, delete, delete-orphan",
-    #    single_parent=True,
-     #   order_by="desc(TUser.timestamp)"
-    #)
-    #trail_features = db.relationship(
-    #    Trail_Feature,
-     #   backref="TrailTest",
-      #  cascade="all, delete, delete-orphan",
-       # single_parent=True,
-        #order_by="desc(Trail_Feature.timestamp)"
-    #)
     
 
 class TrailSchema(ma.SQLAlchemyAutoSchema):
@@ -138,7 +120,7 @@ class TUserSchema(SQLAlchemyAutoSchema):
         model = TUser
         load_instance = True
         include_relationships = True
-   # trails = fields.Nested(TrailSchema, many=True)
+
 
 location_pt_schema = Location_PtSchema()
 location_pts_schema = Location_PtSchema(many = True)

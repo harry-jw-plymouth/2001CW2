@@ -373,6 +373,19 @@ paths:
         "200":
           description: "Successfully read trail features list"
   /trail_features/{FeatureID}/{TrailID}/{Email}/{PassWord}:
+    put:
+      tags:
+        - Trail_Features
+      operationId: "trail_features.update"
+      summary: "Delete a Feature of a trail"
+      parameters: 
+        - $ref: "#/components/parameters/FeatureID"
+        - $ref: "#/components/parameters/TrailID"
+        - $ref: "#/components/parameters/Email"
+        - $ref: "#/components/parameters/PassWord"
+      responses:
+        "204" :
+          description: "Successfully updated Feature of trail"
     delete:
       tags:
         - Trail_Features
@@ -405,7 +418,7 @@ paths:
               $ref: "#/components/schemas/Trail_Feature"
       responses:
         "201":
-          description: "Successfully created trail"
+          description: "Successfully created trail feature"
   /trail_features/{TrailID}:
     get:
       operationId: "trail_features.read_one_trails_features"
@@ -458,6 +471,27 @@ paths:
         "201":
           description: "Successfully created point for trail" 
   /trail_locationpt/{LocationPoint}/{TrailID}/{Email}/{PassWord}:
+    put:
+      tags:
+        - Trail_locationpt
+      operationId: "trail_locationpt.update"
+      summary: "Update a location point for a trail"
+      parameters: 
+        - $ref: "#/components/parameters/LocationPoint"
+        - $ref: "#/components/parameters/TrailID"
+        - $ref: "#/components/parameters/Email"
+        - $ref: "#/components/parameters/PassWord"
+      requestBody:
+        description: "point to update"
+        required: True 
+        content: 
+          application/json:
+            schema:
+              x-body-name: "traillocationpoint"
+              $ref: "#/components/schemas/traillocationpoint"
+      responses:
+        "204" :
+          description: "Successfully updated point of trail"
     delete:
       tags:
         - Trail_locationpt

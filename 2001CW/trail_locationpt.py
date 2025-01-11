@@ -44,6 +44,35 @@ def create(traillocationpoint,Email,PassWord):
     else:
         print(f"Authentication failed with status code {response.status_code} ")
 
+def update(traillocationpoint,LocationPoint,TrailID, Email, PassWord):
+    credentials = {
+        'email' : Email, 
+        'password' : PassWord
+    }
+    response = requests.post(auth_url, json=credentials)
+    if response.status_code == 200:
+        try:
+            json_response = response.json()
+            if json_response[1] == 'True':
+                PointID = traillocationpoint.get("Location_Point")
+                TrailID = traillocationpoint.get("TrailID")
+                existing_traillocpoint = Trail_LocationPt.query.filter(Trail_LocationPt.Location_Point == PointID, Trail_LocationPt.TrailID == TrailID).one_or_none()
+                if  existing_traillocpoint is not None:
+                    update_tpoint = traillocationpt_schema.load(traillocationpoint, session=db.session)
+                    existing_traillocpoint.Order_no = update_tpoint.Order_no
+                    db.session.merge(existing_traillocpoint)
+                    db.session.commit()
+                    return traillocationpt_schema.dump(existing_traillocpoint), 201
+                else:
+                    abort(406, f"trail point with IDs {PointID},{TrailID} not found")
+            else:
+                abort(406, f"Could not authenticate")
+                
+        except requests.JSONDecodeError:
+            print(response.text)
+    else:
+        print(f"Authentication failed with status code {response.status_code} ")
+    
 
 def delete(LocationPoint,TrailID,Email,PassWord):
     credentials = {

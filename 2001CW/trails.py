@@ -8,40 +8,12 @@ import requests
 from config import db, ma
 from models import TUser, tuser_schema ,Trail, trail_schema, trails_schema
 
-def get_timestamp():
-    return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
-
 auth_url = 'https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users'
 
-server = 'dist-6-505.uopnet.plymouth.ac.uk'
-database = 'COMP2001_HWatton'
-username = 'HWatton'
-password = 'IfrW391*'
-driver = '{ODBC Driver 17 for SQL Server}'
-
-
-conn = pyodbc.connect( 
-    f'DRIVER={driver};'
-    f'SERVER={server};'
-    f'DATABASE={database};'
-    f'UID={username};'
-    f'PWD={password};'
-    'Encrypt=Yes;'
-    'TrustServerCertificate=Yes;'
-    'Connection Timeout=30;'
-    'Trusted_Connection=No'
-)
-cursor = conn.cursor()
-cursor.execute("SELECT * FROM CW2.Trail")
-ts = cursor.fetchall()
-for trail in ts:
-        print(trail)
-#conn = pyodbc.connect(conn_str)
 
 def read_all():
     trails = Trail.query.all()        
     return trails_schema.dump(trails)
-    #return list(TRAILS2.values())
 
 def create(Email,PassWord,trail):
     credentials = {
@@ -52,8 +24,6 @@ def create(Email,PassWord,trail):
     if response.status_code == 200:
         try:
             json_response = response.json()
-            print("Authenticated successfully:", json_response)
-            print(json_response[1])
             if json_response[1] == 'True':
                 print("Log in success")
                 TrailID = trail.get("TrailID")
@@ -66,7 +36,6 @@ def create(Email,PassWord,trail):
                 else:
                     abort(406, f"Trail with ID {TrailID} already exists")
             else:
-                print (" Log in failed")
                 abort(406, f"Could not authenticate")
                 
         except requests.JSONDecodeError:
@@ -74,7 +43,6 @@ def create(Email,PassWord,trail):
             print(response.text)
     else:
         print(f"Authentication failed with status code {response.status_code} ")
-        print("Response content:", response.text)
 
 def read_one(TrailID):
     trail = Trail.query.filter(Trail.TrailID == TrailID).one_or_none()
@@ -124,7 +92,6 @@ def update(TrailID,Email,PassWord, trail):
             print(response.text)
     else:
         print(f"Authentication failed with status code {response.status_code} ")
-        print("Response content:", response.text)
 
 
 def delete(TrailID,Email,PassWord):

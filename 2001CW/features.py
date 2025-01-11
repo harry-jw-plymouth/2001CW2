@@ -93,7 +93,7 @@ def delete(FeatureID,Email,PassWord):
                 else:
                     abort(
                         404, f"Feature with id {FeatureID} not found"
-        )
+                    )
             else:
                 abort(406, f"Could not authenticate")
                 
